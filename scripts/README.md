@@ -2,7 +2,7 @@ This document contains Python 3 code snippets for performing
 basic operations in Spark
 
 
-1. Firstly, we need to create spark session.
+1 . Firstly, we need to create spark session.
 In Jupyter notebook press New button on the right and choose 'Python 3' option from drop down list.
  Copy and paste the code below into the opened page and run it. It will initialize
  a new spark session for application 'SparkBootcampApp'
@@ -13,7 +13,7 @@ spark = SparkSession.builder.appName("SparkBootcampApp").getOrCreate()
 spark.sql('SELECT "Test" as c1').show()
 ```
 
-2. Reading with pyspark - lets create a dataframe with a proper schema:
+2 . Reading with pyspark - lets create a dataframe with a proper schema:
 ```
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, Row
 schema = StructType([
@@ -35,7 +35,7 @@ df_customer.show()
 df_customer.schema
 ```
 
-3. Lets read from the data from csv file and output the content:
+3 . Lets read from the data from csv file and output the content:
 ```
 df_customer = spark.read.csv("/scripts/customer.csv", header=True)
 df_customer.show()
@@ -43,7 +43,7 @@ df_customer.schema
 ```
 what is the difference with the output above have you noticed?
 
-4. Lets reread data from csv file and assign a proper schema:
+4 . Lets reread data from csv file and assign a proper schema:
 ```
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, Row
 schema = StructType([
@@ -57,7 +57,7 @@ df_customer.show()
 df_customer.schema
 ```
 
-5. Writing in spark
+5 . Writing in spark
 ```
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, Row
 schema = StructType([
@@ -82,7 +82,7 @@ df_customer_read.show()
 Notice how spark 'partinioned' the output file. This can be adjusted with coalesce function 
 we will explore more in the Optimization session
 
-5. Basic transformations
+6 . Basic transformations
 Lets count how much each customer has spent on an order
 ```
 order_schema = StructType([
