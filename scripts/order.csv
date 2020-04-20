@@ -1,0 +1,4 @@
+customer_id,order_id,product,price
+1,20,chocolate bar,4
+1,30,honey,8
+2,40,kiwi,3

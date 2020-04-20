@@ -6,8 +6,29 @@ jupyter/pyspark-notebook image from docker and run the container to enable
 us to connect to the notebook. The whole process is taking about 20min. 
 Time to get a coffee while listening to the presentation
 ```
- docker run -it --rm -p 8888:8888 -p 4040:4040 -v ~:/home/jovyan/workspace -v $(pwd)/scripts:/home/jovyan/workspace/scripts jupyter/pyspark-notebook
+ docker run -it --rm -p 8888:8888 -p 4040:4040 -v ~:/home/jovyan/workspace -v $(pwd)/scripts:/scripts jupyter/pyspark-notebook
 ```
+
+## Set up spark config
+By default spark UI is available via 4040 port on the spark running machine.
+However, this only works while a spark code is running.
+In order to monitor the historical job executions in spark we need to enable this functionality first:
+```
+docker ps
+docker exec -u 0 -it CONTAINER_ID bash
+cd $SPARK_HOME
+cp conf/spark-defaults.conf.template conf/spark-defaults.conf
+nano conf/spark-defaults.conf         
+```
+uncomment the line 
+```
+spark.eventLog.enabled true
+```
+ and save. Then run:
+ ```
+./sbin/start-history-server.sh 
+```
+to start spark history and monitor historical jobs by 4040 port.
 
 ## Login 
 Open a browser and paste the link to open jupyter:
