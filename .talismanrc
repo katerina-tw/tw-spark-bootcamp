@@ -1,5 +1,5 @@
 fileignoreconfig:
 - filename: README.md
-  checksum: 6f5dd40370e16596ac9e58b17dae1adf4d612d1fec05388f5b4c7d2187b72fde
+  checksum: 8dbba293907cd07000e5de1f543e2687a308017bc212f410e72d82ea5c8cd46a
   ignore_detectors: []
 scopeconfig: []
