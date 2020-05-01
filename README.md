@@ -1,3 +1,9 @@
+## Prerequesites
+
+git clone git@github.com:katerina-tw/tw-spark-bootcamp.git
+cd tw-spark-bootcamp 
+docker pull jupyter/pyspark-notebook
+
 
 ## Startup
 We will be using Python 3 in jupyter to access spark API.
@@ -22,11 +28,11 @@ However, this only works while a spark code is running.
 In order to monitor the historical job executions in spark we need to enable this functionality first.
 Open the terminal and run the commands:
 ```
-mkdir /tmp/spark-events
-chown jovyan:users /tmp/spark-events
 docker ps
 # get the CONTAINER ID of the running spark_maching container and insert in the next command
 docker exec -u 0 -it CONTAINER_ID bash 
+mkdir /tmp/spark-events
+chown jovyan:users /tmp/spark-events
 cd $SPARK_HOME
 cp conf/spark-defaults.conf.template conf/spark-defaults.conf
 nano conf/spark-defaults.conf         
@@ -35,7 +41,7 @@ uncomment the line
 ```
 spark.eventLog.enabled true
 ```
-save and close. Now run:
+save by pressing Ctrl+O and close Ctrl+X. Now run:
  ```
 ./sbin/start-history-server.sh 
 ```
@@ -43,9 +49,7 @@ to start spark history and monitor historical jobs by 4040 port on the local mac
 
 Configuration for accessing the historical spark jobs is done.
 By default the events logs go under /tmp/spark-events. Once we run some of the jobs, the log will start filling in 
-and we will be able to access historical information. We will observe them in UI in the next steps.
-Now just open in the browser in a new tab:
-http://127.0.0.1:4040
+and we will be able to access historical information. We will observe them in UI in the next steps
 
 ## Developing in Pyspark
 See guide [here](scripts/README.md)

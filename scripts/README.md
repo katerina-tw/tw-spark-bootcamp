@@ -5,7 +5,9 @@ basic operations in Spark
 1 . Firstly, we need to create spark session.
 In Jupyter notebook press New button on the right and choose 'Python 3' option from drop down list.
  Copy and paste the code below into the opened page and press Run. It will initialize
- a new spark session for application 'SparkBootcampApp'
+ a new spark session for application 'SparkBootcampApp'. The very first initialization of spark session is taking
+ time, so, please, be patient before output of the command appears.
+ The subsequent runs with already created Spark Session are way more faster.
 ```
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName("SparkBootcampApp").getOrCreate()
@@ -27,6 +29,8 @@ df_customer = spark.read.csv("/scripts/customer.csv", header=True)
 df_customer.show()
 df_customer.printSchema()
 ```
+Now open a new tab in the browser and access historical spark jobs:
+http://127.0.0.1:4040
 
 2b . Reading with pyspark - lets create a dataframe with a proper schema:
 ```
@@ -73,7 +77,7 @@ import random
 import string
 
 letters = string.ascii_lowercase
-FILE_NAME=f"{''.join(random.choice(letters) for i in range(10))}.csv"
+DIR_NAME=f"{''.join(random.choice(letters) for i in range(10))}"
 schema = StructType([
     StructField("id", IntegerType(), False),
     StructField("name", StringType(), True),
@@ -89,15 +93,17 @@ df_customer_2 = spark.createDataFrame(
   spark.sparkContext.parallelize(data),
   schema
 )
-df_customer_2.write.option("header","true").csv(f"/scripts/{FILE_NAME}")
-df_customer_read = spark.read.csv(f"/scripts/{FILE_NAME}", schema=schema,header=True)
+df_customer_2.write.option("header","true").csv(f"/scripts/{DIR_NAME}")
+df_customer_read = spark.read.csv(f"/scripts/{DIR_NAME}", schema=schema,header=True)
 df_customer_read.show()
 ```
-Notice how spark 'partinioned' the output file. This can be adjusted with coalesce function 
-we will explore more in the Optimization session
 
-4a . Basic transformations
-Lets count how much each customer has spent on an order
+Explore the directory structure of tw-spark-bootcamp and under script directory find newly created directory -  that's
+where Spark has written the data. Notice how spark split the output file. This can be adjusted 
+with coalesce function we will run later in the session.
+
+4a . Basic transformations - lets count how much each customer has spent on an order.
+Firstly, we need to join two dataframes - customer and order:
 ```
 order_schema = StructType([
     StructField("customer_id", IntegerType(), False),
@@ -109,8 +115,18 @@ order_schema = StructType([
 df_customer = spark.read.csv("/scripts/customer.csv", header=True)
 df_order = spark.read.csv("/scripts/order.csv", header=True, schema=order_schema)
 df_customer_order = df_customer.join(df_order, df_customer.id == df_order.customer_id, how='inner')
-df_customer_order.select('name', 'product', 'price').show()
+print("Joined dataframe:")
+df_customer_order.show()
+```
+Secondly, run the aggregation with sum() function:
+```
 df_order_sum = df_customer_order.groupBy('id').sum('price').withColumnRenamed("sum(price)", "total_price")
+print("Aggregated dataframe:")
+df_order_sum.show()
+```
+And finally we join aggregated order dataframe back to customer to get the customer name:
+```
+print("Final dataframe:")
 df_order_sum = df_order_sum.join(df_customer, df_order_sum.id == df_customer.id, how='inner').select('name','total_price').show()
 ```
 
@@ -124,24 +140,27 @@ df_order_sum = df_order_sum.join(df_customer, df_order_sum.id == df_customer.id,
  df_customer.withColumn('new_column', col("existing_column))
  )
  
-5 . The next workshop session preview. Examples of partitioning and coalesce (No need to run, just listen):
+5 . In order to set a different degree of parallelism functions partitioning() and coalesce() are used:
 ```
-order_schema = StructType([
-    StructField("customer_id", IntegerType(), False),
-    StructField("order_id", IntegerType(), True),
-    StructField("product", StringType(), True),
-    StructField("price", IntegerType(), True)
-    ]
-)
 df_customer = spark.read.csv("/scripts/customer.csv", header=True)
-df_order = spark.read.csv("/scripts/order.csv", header=True, schema=order_schema)
-
 partitioned_customer_df = df_customer.repartition(4, 'id')
-partitioned_order_df = df_order.repartition(4, 'customer_id')
+print ("Number of partitions for customer dataframe:")
+partitioned_customer_df.rdd.getNumPartitions()
 ```
 
 Operation opposite to ```repartition()``` is ```coalesce()```:
+
 ```
-coalesce_order_df = df_order.coalesce(2)
+import random
+import string
+
+letters = string.ascii_lowercase
+DIR_NAME=f"{''.join(random.choice(letters) for i in range(10))}"
+
+coalesce_customer_df = partitioned_customer_df.coalesce(2)
+coalesce_customer_df.write.option("header","true").csv(f"/scripts/{DIR_NAME}")
 ```
 
+After running the last commands explore the content of the directories 
+under tw-spark-bootcamp/scripts, find newly created directory and have a look whether there 
+is any difference in the number of output files
