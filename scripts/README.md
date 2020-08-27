@@ -132,12 +132,12 @@ df_order_sum = df_order_sum.join(df_customer, df_order_sum.id == df_customer.id,
 
 4b. Basic transformations in Spark - try to obtain the result by your own:
  -Find the contact number of the customer who did not make any order
- -Find the difference between customer who spent the most and customer who spent the least on an order (HINT. there is
- a function in pyspark called col if you want to refer to a specific column in spark. For example, the following code 
- assignes to the new column called 'new_column' a value from existing column called 'existing_column':
+ -Find the difference between customer who spent the most and customer who spent the least on an order (HINT. there are
+ functions in pyspark called 'min' and 'max' you can to refer to. For example:
  
- from pyspark.sql.functions import col
- df_customer.withColumn('new_column', col("existing_column))
+ from pyspark.sql.functions import min, max
+ 
+ test_df.select(min("test_column"))
  )
  
 5 . In order to set a different degree of parallelism functions partitioning() and coalesce() are used:

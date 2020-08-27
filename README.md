@@ -1,16 +1,18 @@
 ## Prerequesites
 
 git clone git@github.com:katerina-tw/tw-spark-bootcamp.git
+
 cd tw-spark-bootcamp 
+
 docker pull jupyter/pyspark-notebook
 
 
 ## Startup
 We will be using Python 3 in jupyter to access spark API.
-To install spark+jupyter notebook bundle run the command below. It will pull
-jupyter/pyspark-notebook image from docker and run the container to enable
-us to connect to the notebook. The whole process is taking about 20min. 
-Time to get a coffee while listening to the presentation
+To install spark+jupyter notebook bundle run the command below. (It will pull
+jupyter/pyspark-notebook image from docker if it has not already pulled and run the container to enable
+us to connect to the notebook. Without downloaded docker pyspark image the whole process is taking about 20min. 
+Time to get a coffee while listening to the presentation)
 ```
  docker run -it --rm -p 8888:8888 -p 4040:4040 --name spark_machine -v ~:/home/jovyan/workspace -v $(pwd)/scripts:/scripts jupyter/pyspark-notebook
 ```
