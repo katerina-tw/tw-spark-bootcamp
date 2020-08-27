@@ -131,7 +131,9 @@ df_order_sum = df_order_sum.join(df_customer, df_order_sum.id == df_customer.id,
 ```
 
 4b. Basic transformations in Spark - try to obtain the result by your own:
+
  -Find the contact number of the customer who did not make any order
+ 
  -Find the difference between customer who spent the most and customer who spent the least on an order (HINT. there are
  functions in pyspark called 'min' and 'max' you can to refer to. For example:
  
